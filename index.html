@@ -1,95 +1,407 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Unsent Proposal 💌</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;overflow:hidden;font-family:Georgia,"Times New Roman",serif;background:radial-gradient(circle at 50% 30%,#35162b 0%,#140b18 42%,#07050a 100%);color:#fff}
-canvas{position:fixed;inset:0;pointer-events:none;z-index:0}
-.app{position:relative;z-index:2;width:100%;height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.screen{width:min(430px,94vw);text-align:center;animation:appear 1.2s ease}
-.small{color:#d6a8c5;font-family:Arial,sans-serif;font-size:12px;letter-spacing:4px;text-transform:uppercase;margin-bottom:20px}
-h1{font-size:clamp(42px,12vw,72px);line-height:.95;font-weight:400;margin-bottom:18px}
-.subtitle{color:#d9c5d1;font-family:Arial,sans-serif;font-size:14px;line-height:1.7;margin-bottom:35px}
-.envelope{width:210px;height:145px;margin:0 auto 38px;position:relative;cursor:pointer;filter:drop-shadow(0 20px 35px rgba(0,0,0,.45));transition:transform .3s ease}
-.envelope:hover{transform:translateY(-8px) scale(1.03)}
-.env-body{position:absolute;inset:0;background:linear-gradient(145deg,#8f315e,#531a3b);border-radius:7px;overflow:hidden}
-.env-body:before,.env-body:after{content:"";position:absolute;bottom:0;width:0;height:0;border-style:solid}
-.env-body:before{left:0;border-width:72px 105px 0 0;border-color:#70244a transparent transparent transparent}
-.env-body:after{right:0;border-width:0 0 72px 105px;border-color:transparent transparent #70244a transparent}
-.flap{position:absolute;top:0;left:0;width:0;height:0;border-left:105px solid transparent;border-right:105px solid transparent;border-top:75px solid #a83c6c;transform-origin:top;transition:transform .7s cubic-bezier(.2,.8,.2,1);z-index:3}
-.seal{position:absolute;z-index:5;left:50%;top:61%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#e3a6c4;color:#591b3e;font-size:17px;box-shadow:0 4px 15px rgba(0,0,0,.3)}
-button{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.04);color:white;padding:14px 28px;border-radius:999px;font-size:13px;letter-spacing:2px;cursor:pointer;transition:.25s ease;backdrop-filter:blur(10px)}
-button:hover{background:rgba(255,255,255,.12);transform:translateY(-3px);border-color:#e5a5c4;box-shadow:0 10px 30px rgba(210,100,160,.18)}
-button:active{transform:scale(.94)}
-.hidden{display:none}
-.letter{background:linear-gradient(rgba(255,249,239,.98),rgba(247,236,222,.98));color:#321d28;padding:38px 30px;border-radius:5px;box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.15);transform:rotate(-1deg);animation:letterIn 1s cubic-bezier(.2,.8,.2,1)}
-.letter h2{font-size:27px;font-weight:400;margin-bottom:25px}
-.letter p{font-size:16px;line-height:1.9;margin-bottom:18px}
-.signature{margin-top:28px;font-style:italic;font-size:20px}
-.choice{margin-top:25px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.choice button{color:#321d28;border-color:#9b657e}
-.choice button:hover{background:#ead0dc}
-.final{animation:appear 1s ease}
-.final-heart{font-size:70px;margin-bottom:20px;animation:heartbeat 1.2s infinite}
-.final h2{font-size:38px;font-weight:400;margin-bottom:18px}
-.final p{color:#d9c5d1;line-height:1.8;font-family:Arial,sans-serif;font-size:14px}
-@keyframes appear{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
-@keyframes letterIn{from{opacity:0;transform:translateY(80px) rotate(4deg) scale(.9)}to{opacity:1;transform:translateY(0) rotate(-1deg) scale(1)}}
-@keyframes heartbeat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}}
-@media(max-width:430px){.letter{padding:30px 22px}.letter p{font-size:15px}.envelope{transform:scale(.9)}}
-</style>
-</head>
-<body>
-<canvas id="particles"></canvas>
-<div class="app">
-<section class="screen" id="opening">
-<div class="small">A letter that was never sent</div>
-<h1>The<br>Unsent<br>Proposal</h1>
-<p class="subtitle">Some words are written<br>long before they're spoken.</p>
-<div class="envelope" id="envelope">
-<div class="env-body"></div><div class="flap" id="flap"></div><div class="seal">♥</div>
-</div>
-<button id="openBtn">OPEN THE LETTER</button>
-</section>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Unsent Proposal 💌</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        min-height: 100vh;
+        overflow: hidden;
+        font-family: Georgia, "Times New Roman", serif;
+        background: radial-gradient(
+          circle at 50% 30%,
+          #35162b 0%,
+          #140b18 42%,
+          #07050a 100%
+        );
+        color: #fff;
+      }
+      canvas {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .app {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .screen {
+        width: min(430px, 94vw);
+        text-align: center;
+        animation: appear 1.2s ease;
+      }
+      .small {
+        color: #d6a8c5;
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: clamp(42px, 12vw, 72px);
+        line-height: 0.95;
+        font-weight: 400;
+        margin-bottom: 18px;
+      }
+      .subtitle {
+        color: #d9c5d1;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 35px;
+      }
+      .envelope {
+        width: 210px;
+        height: 145px;
+        margin: 0 auto 38px;
+        position: relative;
+        cursor: pointer;
+        filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.45));
+        transition: transform 0.3s ease;
+      }
+      .envelope:hover {
+        transform: translateY(-8px) scale(1.03);
+      }
+      .env-body {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(145deg, #8f315e, #531a3b);
+        border-radius: 7px;
+        overflow: hidden;
+      }
+      .env-body:before,
+      .env-body:after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        width: 0;
+        height: 0;
+        border-style: solid;
+      }
+      .env-body:before {
+        left: 0;
+        border-width: 72px 105px 0 0;
+        border-color: #70244a transparent transparent transparent;
+      }
+      .env-body:after {
+        right: 0;
+        border-width: 0 0 72px 105px;
+        border-color: transparent transparent #70244a transparent;
+      }
+      .flap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+        border-left: 105px solid transparent;
+        border-right: 105px solid transparent;
+        border-top: 75px solid #a83c6c;
+        transform-origin: top;
+        transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+        z-index: 3;
+      }
+      .seal {
+        position: absolute;
+        z-index: 5;
+        left: 50%;
+        top: 61%;
+        transform: translate(-50%, -50%);
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: #e3a6c4;
+        color: #591b3e;
+        font-size: 17px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+      button {
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: rgba(255, 255, 255, 0.04);
+        color: white;
+        padding: 14px 28px;
+        border-radius: 999px;
+        font-size: 13px;
+        letter-spacing: 2px;
+        cursor: pointer;
+        transition: 0.25s ease;
+        backdrop-filter: blur(10px);
+      }
+      button:hover {
+        background: rgba(255, 255, 255, 0.12);
+        transform: translateY(-3px);
+        border-color: #e5a5c4;
+        box-shadow: 0 10px 30px rgba(210, 100, 160, 0.18);
+      }
+      button:active {
+        transform: scale(0.94);
+      }
+      .hidden {
+        display: none;
+      }
+      .letter {
+        background: linear-gradient(
+          rgba(255, 249, 239, 0.98),
+          rgba(247, 236, 222, 0.98)
+        );
+        color: #321d28;
+        padding: 38px 30px;
+        border-radius: 5px;
+        box-shadow:
+          0 30px 80px rgba(0, 0, 0, 0.55),
+          0 0 0 1px rgba(255, 255, 255, 0.15);
+        transform: rotate(-1deg);
+        animation: letterIn 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      .letter h2 {
+        font-size: 27px;
+        font-weight: 400;
+        margin-bottom: 25px;
+      }
+      .letter p {
+        font-size: 16px;
+        line-height: 1.9;
+        margin-bottom: 18px;
+      }
+      .signature {
+        margin-top: 28px;
+        font-style: italic;
+        font-size: 20px;
+      }
+      .choice {
+        margin-top: 25px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .choice button {
+        color: #321d28;
+        border-color: #9b657e;
+      }
+      .choice button:hover {
+        background: #ead0dc;
+      }
+      .final {
+        animation: appear 1s ease;
+      }
+      .final-heart {
+        font-size: 70px;
+        margin-bottom: 20px;
+        animation: heartbeat 1.2s infinite;
+      }
+      .final h2 {
+        font-size: 38px;
+        font-weight: 400;
+        margin-bottom: 18px;
+      }
+      .final p {
+        color: #d9c5d1;
+        line-height: 1.8;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+      }
+      @keyframes appear {
+        from {
+          opacity: 0;
+          transform: translateY(25px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes letterIn {
+        from {
+          opacity: 0;
+          transform: translateY(80px) rotate(4deg) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) rotate(-1deg) scale(1);
+        }
+      }
+      @keyframes heartbeat {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        15% {
+          transform: scale(1.18);
+        }
+        30% {
+          transform: scale(1);
+        }
+      }
+      @media (max-width: 430px) {
+        .letter {
+          padding: 30px 22px;
+        }
+        .letter p {
+          font-size: 15px;
+        }
+        .envelope {
+          transform: scale(0.9);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="particles"></canvas>
+    <div class="app">
+      <section class="screen" id="opening">
+        <div class="small">A letter that was never sent</div>
+        <h1>The<br />Unsent<br />Proposal</h1>
+        <p class="subtitle">
+          Some words are written<br />long before they're spoken.
+        </p>
+        <div class="envelope" id="envelope">
+          <div class="env-body"></div>
+          <div class="flap" id="flap"></div>
+          <div class="seal">♥</div>
+        </div>
+        <button id="openBtn">OPEN THE LETTER</button>
+      </section>
 
-<section class="screen hidden" id="letterScreen">
-<div class="letter">
-<h2>Dear You,</h2>
-<p>I don't really know when it happened. Maybe it was one small conversation. Maybe it was a smile that stayed in my head longer than it should have.</p>
-<p>I kept thinking that someday I'd find the perfect moment to say something.</p>
-<p>But sometimes the perfect moment never arrives.</p>
-<div class="signature">— Someone who never pressed send</div>
-<div class="choice"><button id="continueBtn">THERE'S MORE...</button></div>
-</div>
-</section>
+      <section class="screen hidden" id="letterScreen">
+        <div class="letter">
+          <h2>Dear You,</h2>
+          <p>
+            I don't really know when it happened. Maybe it was one small
+            conversation. Maybe it was a smile that stayed in my head longer
+            than it should have.
+          </p>
+          <p>
+            I kept thinking that someday I'd find the perfect moment to say
+            something.
+          </p>
+          <p>But sometimes the perfect moment never arrives.</p>
+          <div class="signature">— Someone who never pressed send</div>
+          <div class="choice">
+            <button id="continueBtn">THERE'S MORE...</button>
+          </div>
+        </div>
+      </section>
 
-<section class="screen hidden" id="finalScreen">
-<div class="final">
-<div class="final-heart">♥</div>
-<h2>Maybe someday.</h2>
-<p>Until then, some stories are allowed<br>to remain beautifully unfinished.</p>
-<br><button onclick="location.reload()">READ IT AGAIN</button>
-</div>
-</section>
-</div>
+      <section class="screen hidden" id="finalScreen">
+        <div class="final">
+          <div class="final-heart">♥</div>
+          <h2>Maybe someday.</h2>
+          <p>
+            Until then, some stories are allowed<br />to remain beautifully
+            unfinished.
+          </p>
+          <br /><button onclick="location.reload()">READ IT AGAIN</button>
+        </div>
+      </section>
+    </div>
 
-<script>
-const opening=document.getElementById("opening"),letterScreen=document.getElementById("letterScreen"),finalScreen=document.getElementById("finalScreen"),envelope=document.getElementById("envelope"),flap=document.getElementById("flap"),openBtn=document.getElementById("openBtn"),continueBtn=document.getElementById("continueBtn");
-let opened=false;
-function openLetter(){if(opened)return;opened=true;flap.style.transform="rotateX(180deg)";setTimeout(()=>{opening.classList.add("hidden");letterScreen.classList.remove("hidden")},650)}
-openBtn.addEventListener("click",openLetter);envelope.addEventListener("click",openLetter);
-continueBtn.addEventListener("click",()=>{letterScreen.classList.add("hidden");finalScreen.classList.remove("hidden");createHeartBurst()});
+    <script>
+      const opening = document.getElementById("opening"),
+        letterScreen = document.getElementById("letterScreen"),
+        finalScreen = document.getElementById("finalScreen"),
+        envelope = document.getElementById("envelope"),
+        flap = document.getElementById("flap"),
+        openBtn = document.getElementById("openBtn"),
+        continueBtn = document.getElementById("continueBtn");
+      let opened = false;
+      function openLetter() {
+        if (opened) return;
+        opened = true;
+        flap.style.transform = "rotateX(180deg)";
+        setTimeout(() => {
+          opening.classList.add("hidden");
+          letterScreen.classList.remove("hidden");
+        }, 650);
+      }
+      openBtn.addEventListener("click", openLetter);
+      envelope.addEventListener("click", openLetter);
+      continueBtn.addEventListener("click", () => {
+        letterScreen.classList.add("hidden");
+        finalScreen.classList.remove("hidden");
+        createHeartBurst();
+      });
 
-const canvas=document.getElementById("particles"),ctx=canvas.getContext("2d");let particles=[];
-function resize(){canvas.width=innerWidth;canvas.height=innerHeight}resize();addEventListener("resize",resize);
-for(let i=0;i<45;i++)particles.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,size:Math.random()*2+.5,speed:Math.random()*.35+.1,opacity:Math.random()*.5+.1});
-function animateParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.y-=p.speed;if(p.y<-10){p.y=canvas.height+10;p.x=Math.random()*canvas.width}ctx.globalAlpha=p.opacity;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill()});requestAnimationFrame(animateParticles)}
-animateParticles();
+      const canvas = document.getElementById("particles"),
+        ctx = canvas.getContext("2d");
+      let particles = [];
+      function resize() {
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+      }
+      resize();
+      addEventListener("resize", resize);
+      for (let i = 0; i < 45; i++)
+        particles.push({
+          x: Math.random() * innerWidth,
+          y: Math.random() * innerHeight,
+          size: Math.random() * 2 + 0.5,
+          speed: Math.random() * 0.35 + 0.1,
+          opacity: Math.random() * 0.5 + 0.1,
+        });
+      function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p) => {
+          p.y -= p.speed;
+          if (p.y < -10) {
+            p.y = canvas.height + 10;
+            p.x = Math.random() * canvas.width;
+          }
+          ctx.globalAlpha = p.opacity;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = "#fff";
+          ctx.fill();
+        });
+        requestAnimationFrame(animateParticles);
+      }
+      animateParticles();
 
-function createHeartBurst(){for(let i=0;i<18;i++){const heart=document.createElement("div");heart.innerHTML="♥";heart.style.position="fixed";heart.style.left="50%";heart.style.top="45%";heart.style.zIndex="10";heart.style.pointerEvents="none";heart.style.color="#e8a6c4";heart.style.fontSize=12+Math.random()*20+"px";document.body.appendChild(heart);const angle=Math.random()*Math.PI*2,distance=100+Math.random()*220,x=Math.cos(angle)*distance,y=Math.sin(angle)*distance;heart.animate([{transform:"translate(-50%,-50%) scale(0)",opacity:1},{transform:`translate(calc(-50% + ${x}px),calc(-50% + ${y}px)) scale(1.2)`,opacity:0}],{duration:1300,easing:"cubic-bezier(.2,.8,.2,1)"});setTimeout(()=>heart.remove(),1400)}}
-</script>
-</body>
+      function createHeartBurst() {
+        for (let i = 0; i < 18; i++) {
+          const heart = document.createElement("div");
+          heart.innerHTML = "♥";
+          heart.style.position = "fixed";
+          heart.style.left = "50%";
+          heart.style.top = "45%";
+          heart.style.zIndex = "10";
+          heart.style.pointerEvents = "none";
+          heart.style.color = "#e8a6c4";
+          heart.style.fontSize = 12 + Math.random() * 20 + "px";
+          document.body.appendChild(heart);
+          const angle = Math.random() * Math.PI * 2,
+            distance = 100 + Math.random() * 220,
+            x = Math.cos(angle) * distance,
+            y = Math.sin(angle) * distance;
+          heart.animate(
+            [
+              { transform: "translate(-50%,-50%) scale(0)", opacity: 1 },
+              {
+                transform: `translate(calc(-50% + ${x}px),calc(-50% + ${y}px)) scale(1.2)`,
+                opacity: 0,
+              },
+            ],
+            { duration: 1300, easing: "cubic-bezier(.2,.8,.2,1)" },
+          );
+          setTimeout(() => heart.remove(), 1400);
+        }
+      }
+    </script>
+  </body>
 </html>
